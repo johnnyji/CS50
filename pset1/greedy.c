@@ -4,7 +4,6 @@
 
 int main(void)
 {
-  int loop_count = 0;
   float change_owed;
   
   do
@@ -20,9 +19,6 @@ int main(void)
   // loops through every type of coin we have
   for (int i = 0; i < sizeof(coin_types) / sizeof(coin_types[0]); i++)
   {
-    
-    loop_count = i;
-    
     int coin_type = coin_types[i];
     
     // if theres at least one quantity of the current coin type we can give back, figure out
@@ -40,6 +36,4 @@ int main(void)
     }
   }
   
-  printf("Times looped: %i\n", loop_count);
-  loop_count = 0;
 }
