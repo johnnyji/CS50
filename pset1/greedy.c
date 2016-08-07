@@ -17,7 +17,7 @@ int main(void)
   int coin_types[] = {25, 10, 5, 1};
   
   // loops through every type of coin we have
-  for (int i = 0; i < sizeof(coin_types) / sizeof(coin_types[0]); i++)
+  for (int i = 0, l = sizeof(coin_types)/sizeof(coin_types[0]); i < l; i++)
   {
     int coin_type = coin_types[i];
     
