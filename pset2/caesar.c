@@ -15,7 +15,10 @@
 
 // Prototype
 
-int IsAsciiAlphabet(int char_code);
+char EncryptLowerCase(int key, int char_code);
+char EncryptUpperCase(int key, int char_code);
+int IsCapAlphabet(int char_code);
+int IsLowerCaseAlphabet(int char_code);
 
 
 // Implementation
@@ -46,34 +49,71 @@ int main(int argc, char* argv[])
     for (int i = 0; i < text_length; i++)
     {
         // For every alphabet in the user's input text, change the char to ASCII
-        // and add the relevant number of numbers (key) to change the character,
-        // and add the newly "encrypted" character to the `encrypted_text` string
-        if (IsAsciiAlphabet(text[i]))
-        {
-            int ascii_char_code = (int) text[i];
-            encrypted_text[i] = (char) (ascii_char_code + key);
-        }
+        int char_code = (int) text[i];
+
+        if (IsCapAlphabet(char_code))
+            encrypted_text[i] = EncryptUpperCase(key, char_code);
+        else if (IsLowerCaseAlphabet(char_code))
+            encrypted_text[i] = EncryptLowerCase(key, char_code);
         else
-        {
             encrypted_text[i] = text[i];
-        }
     }
 
-    printf("Encrypted: %s\n", encrypted_text);
+    printf("Encrypt: %s\n", encrypted_text);
     return 0;
 }
 
 /**
- * Checks if a given ascii code is an alphabet character between a-z or A-Z
+ * Encrypts a lower case alphabet ASCII code using the Caesar Cipher encryption key
  */
-int IsAsciiAlphabet(int char_code)
+char EncryptLowerCase(int key, int char_code)
+{
+    // Gets the regular char num (0-26) from its ASCII code,
+    // then uses that number to encrypt the new char num, and
+    // finally converts the newly converted char num back into ASCII
+    int char_num = char_code - ASCII_ALPHABET_REG_MIN;
+    int encrypted_char_num = (char_num + key) % NUM_OF_ALPHABETS;
+    int encrypted_ascii_code = ASCII_ALPHABET_REG_MIN + encrypted_char_num;
+    
+    return (char) encrypted_ascii_code;
+}
+
+/**
+ * Encrypts a upper case alphabet ASCII code using the Caesar Cipher encryption key
+ */
+char EncryptUpperCase(int key, int char_code)
+{
+    // Gets the regular char num (0-26) from its ASCII code,
+    // then uses that number to encrypt the new char num, and
+    // finally converts the newly converted char num back into ASCII
+    int char_num = char_code - ASCII_ALPHABET_CAP_MIN;
+    int encrypted_char_num = (char_num + key) % NUM_OF_ALPHABETS;
+    int encrypted_ascii_code = ASCII_ALPHABET_CAP_MIN + encrypted_char_num;
+    
+    return (char) encrypted_ascii_code;
+}
+
+/**
+ * Checks if a given ascii code is a A-Z
+ */
+int IsCapAlphabet(int char_code)
 {
     // if the character is a capitalized alphabet
     if (char_code >= ASCII_ALPHABET_CAP_MIN && char_code <= ASCII_ALPHABET_CAP_MAX)
         return TRUE;
+
+    return FALSE;
+}
+
+
+/**
+ * Checks if a given ascii code is a a-z
+ */
+int IsLowerCaseAlphabet(int char_code)
+{
     // if the character is a lower cased alphabet
     if (char_code >= ASCII_ALPHABET_REG_MIN && char_code <= ASCII_ALPHABET_REG_MAX)
        return TRUE;
-
+    
     return FALSE;
 }
