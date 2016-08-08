@@ -50,7 +50,6 @@ int main(int argc, string argv[])
     string text = GetString();
 
     int text_length = strlen(text);
-    int keycount = 0;
     char encrypted[text_length];
 
     // Loop through every character and encrypt
@@ -60,16 +59,9 @@ int main(int argc, string argv[])
 
         // Encrypts the current character and sets it on the encrypted string
         if (isalpha(text[i]))
-            encrypted[i] = Encrypt(keyword[keycount], current_char); 
+            encrypted[i] = Encrypt(keyword[i % keyword_length], current_char); 
         else
             encrypted[i] = current_char;
-    
-        // If there are no more keys left in our keyword, we reset back to
-        // the first letter of the keyword to use
-        if ((keycount + 1) >= keyword_length)
-            keycount = 0;
-        else
-            keycount++;
     }
 
     printf("Encrypted: %s\n", encrypted);
