@@ -41,7 +41,7 @@ int main(int argc, string argv[])
 
     if (isAlphabet == false)
     {
-        printf("The keyword can only contain alphabetic letters.");
+        printf("The keyword can only contain alphabetic letters.\n");
         return 1;
     }
 
@@ -50,21 +50,35 @@ int main(int argc, string argv[])
     string text = GetString();
 
     int text_length = strlen(text);
+    int keycount = 0;
     char encrypted[text_length];
 
     // Loop through every character and encrypt
     for (int i = 0; i < text_length; i++)
     {
         char current_char = text[i];
+        char key = keyword[keycount % keyword_length];
 
         // Encrypts the current character and sets it on the encrypted string
-        if (isalpha(text[i]))
-            encrypted[i] = Encrypt(keyword[i % keyword_length], current_char); 
+        if (isalpha(current_char))
+        {
+            encrypted[i] = Encrypt(key, current_char); 
+            // We only want to increment the keycount when we encrypt a key,
+            // this is so spaces and special chars don't throw off the keyword wrap-around
+            // cycle
+            keycount++;
+        }
         else
+        {
             encrypted[i] = current_char;
+        }
+
     }
 
-    printf("Encrypted: %s\n", encrypted);
+    // Logs out the encrypted word
+    for (int i = 0; i < text_length; i++)
+        printf("%c", encrypted[i]);
+    printf("\n");
 
     return 0;
 }
