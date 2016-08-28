@@ -17,6 +17,7 @@
  
 #define _XOPEN_SOURCE 500
 
+#include <string.h>
 #include <cs50.h>
 #include <math.h>
 #include <stdio.h>
@@ -24,6 +25,7 @@
 #include <unistd.h>
 
 // constants
+#define BLANK_SPACE 0
 #define DIM_MIN 3
 #define DIM_MAX 9
 
@@ -35,6 +37,9 @@ int d;
 
 // prototypes
 void clear(void);
+char * format_board_item(int item, int max);
+int get_digits_size(int digit);
+int get_max_num(void);
 void greet(void);
 void init(void);
 void draw(void);
@@ -162,36 +167,41 @@ void init(void)
 {
 
     // Generates the board
-    int row[d];
+    int max = d - 1;
+    int number = get_max_num();
     int row_index_tracker = 0;
-    int board_index_tracker = 0;
+    int column_index_tracker = 0;
 
-    // Counts down the numbers on the board
-    for (int i = d * d - 1; i > 0; i--)
+    while (number >= 0)
     {
-        // If a row is not yet full, keep filling it
-        if (row_index_tracker < d)
+        // Adds the current item
+        board[row_index_tracker][column_index_tracker] = number;
+        number--;
+
+        // We're done filling the board
+        if (column_index_tracker == max && row_index_tracker == max)
         {
-            row[row_index_tracker] = i;
+            break;
+        }
+        // We're onto a new row
+        else if (column_index_tracker == max)
+        {
+            column_index_tracker = 0;
             row_index_tracker++;
         }
-        // When theres enough items for one row
-        // We add that row onto our board and update our trackers
-        else
-        {
-            board[board_index_tracker] = row;
-            row = {};
-            board_index_tracker++;
-            row_index_tracker = 0;
+        // Still on the same row, need to increase the colum index
+        else {
+            column_index_tracker++;
         }
+
     }
-    
+
     // Flips 1 and 2 if the board dimensions are even
     if (d % 2 == 0)
     {
         int n = sizeof(board) / sizeof(board[0]);
-        board[n - 1] = 2;
-        board[n - 2] = 1;
+        board[n - 1][n - 1] = 2;
+        board[n - 1][n - 2] = 1;
     }
 }
 
@@ -200,19 +210,79 @@ void init(void)
  */
 void draw(void)
 {
-    for (int row_index = 0, int l = d - 1; i < l; row_index++)
+
+    // Finds how long the biggest number is, so we can pad the other numbers to make sure
+    // that the table wont print malformed
+    int max_item_length = get_digits_size(get_max_num());
+
+    for (int row_index = 0; row_index < d; row_index++)
     {
-        for (int item_index = 0; j < l; item_index++)
+        for (int column_index = 0; column_index < d; column_index++)
         {
-            // If this is the last item in a row, print the item, otherwise print the item with a space
-            if (item_index == l)
-                printf("%d", board[row_index][item_index]);
+            int item = board[row_index][column_index];
+            // If this is the last column in a row, print the item and a break, otherwise print the item with a space
+            if (column_index == d - 1)
+                printf("%s\n", format_board_item(item, max_item_length));
             else
-                printf("%d ",board[row_index][item_index]);
+                printf("%s ", format_board_item(item, max_item_length));
         }
-        // Line breaks each row
-        printf('\n');
     }
+}
+
+/**
+ * Formats the number to contain the proper amount of padding for printing
+ */
+char * format_board_item(int item, int max)
+{
+    // If we want to return a char list, we need to manually allocate memory for it
+    char *formatted = (char *) malloc(sizeof(char) * max);
+    char item_str[get_digits_size(item)];
+
+    // Converts number to string
+    sprintf(item_str, "%d", item);
+
+    int item_index = max - sizeof(item_str)/sizeof(item_str[0]);
+
+    // Pads the formatted string with empty spaces
+    for (int i = 0; i < item_index; i++)
+        formatted[i] = ' ';
+
+    // Sets the number in the return string
+    for (int i = item_index; i < max; i++)
+    {
+        char item = item_str[i - item_index];
+        if (item == '0')
+            formatted[i] = '_';
+        else
+            formatted[i] = item_str[i - item_index];
+    }
+
+    return formatted;
+}
+
+/**
+ * Gets the length of the digit, ie:
+ *
+ * 1 -> 1
+ * 0 -> 1
+ * 100 -> 3
+ * 10 -> 2
+ */
+int get_digits_size(int digit)
+{
+    // In the case the digit is `0`, we default to 1 size
+    int size = floor(log10(abs(digit))) + 1;
+
+    if (size <= 0) return 1;
+    return size;
+}
+
+/**
+ * Gets the max number on the board
+ */
+int get_max_num(void)
+{
+    return d * d - 1;
 }
 
 /**
