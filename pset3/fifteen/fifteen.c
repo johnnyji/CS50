@@ -250,7 +250,7 @@ char * format_board_item(int item, int max)
     // Sets the number in the return string
     for (int i = item_index; i < max; i++)
     {
-        if (atoi(item_str) == 0)
+        if (atoi(item_str) == BLANK_SPACE)
             formatted[i] = '_';
         else
             formatted[i] = item_str[i - item_index];
