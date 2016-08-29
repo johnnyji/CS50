@@ -31,6 +31,8 @@
 
 // board
 int board[DIM_MAX][DIM_MAX];
+int space_row_i;
+int space_col_i;
 
 // dimensions
 int d;
@@ -63,6 +65,10 @@ int main(int argc, string argv[])
             DIM_MIN, DIM_MIN, DIM_MAX, DIM_MAX);
         return 2;
     }
+
+    // remembers the initial indexes of the blank space
+    space_row_i = d - 1;
+    space_col_i = d - 1;
 
     // open log
     FILE* file = fopen("log.txt", "w");
@@ -290,7 +296,53 @@ int get_max_num(void)
  */
 bool move(int tile)
 {
-    // TODO
+
+    // Length of col/row
+    const n = sizeof(board)/(sizeof(board[0])/sizeof(board[0][0]));
+
+    // Tile is above space, move tile and track new space
+    if (space_row_i != 0 && board[space_row_i - 1][space_col_i] == tile)
+    {
+
+        // Swap tile and space
+        board[space_row_i][space_col_i] = tile;
+        board[space_row_i - 1][space_col_i] = BLANK_SPACE;
+        // Remember new space
+        space_row_i = space_row_i - 1;
+        return true;
+    }
+    // Tile is below space, move tile and track new space
+    if (space_row_i != n - 1 && board[space_row_i + 1][space_col_i] == tile)
+    {
+        // Swap tile and space
+        board[space_row_i][space_col_i] = tile;
+        board[space_row_i + 1][space_col_i] = BLANK_SPACE;
+        // Remember new space
+        space_row_i = space_row_i + 1;
+       return true;
+    }
+    // Tile is to left of space, move tile and track new space
+    if (space_col_i != 0 && board[space_row_i][space_col_i - 1] == tile)
+    {
+        // Swap tile and space
+        board[space_row_i][space_col_i] = tile;
+        board[space_row_i][space_col_i - 1] = BLANK_SPACE;
+        // Remember new space
+        space_col_i = space_col_i - 1;
+        return true;
+    }
+    // Tile is to left of space, move tile and track new space
+    if (space_col_i != n - 1 && board[space_row_i][space_col_i + 1] == tile)
+    {
+        // Swap tile and space
+        board[space_row_i][space_col_i] = tile;
+        board[space_row_i][space_col_i + 1] = BLANK_SPACE;
+        // Remember new space
+        space_col_i = space_col_i + 1;
+        return true;
+    }
+
+    // Do nothing because tile is not touching space
     return false;
 }
 
