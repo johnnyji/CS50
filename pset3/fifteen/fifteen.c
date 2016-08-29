@@ -298,7 +298,7 @@ bool move(int tile)
 {
 
     // Length of col/row
-    const n = sizeof(board)/(sizeof(board[0])/sizeof(board[0][0]));
+    int n = sizeof(board)/(sizeof(board[0])/sizeof(board[0][0]));
 
     // Tile is above space, move tile and track new space
     if (space_row_i != 0 && board[space_row_i - 1][space_col_i] == tile)
