@@ -132,11 +132,8 @@ int main(int argc, string argv[])
         if (!move(tile))
         {
             printf("\nIllegal move.\n");
-            usleep(500000);
         }
 
-        // sleep thread for animation's sake
-        usleep(500000);
     }
     
     // close log
@@ -352,6 +349,42 @@ bool move(int tile)
  */
 bool won(void)
 {
-    // TODO
-    return false;
+    int n = d - 1;
+
+    // If the space is not even in the right position, shortcircuit the calculation
+    if (board[n][n] != 0)
+        return false;
+
+    // If the smallest number is not the first, short circuit the calculation
+    if (board[0][0] != 1)
+        return false;
+
+    int valid_tile = 1;
+    int invalid_count = 0;
+    
+    for (int i = 0; i < n; i++)
+    {
+       for (int j = 0; j < n; j++)
+       {
+           // If we're on the last 0, the valid counter wont catch it so we need to man break
+           if (n == i && n == j)
+               break;
+
+           // Checks to see if the right tile is in place
+           if (board[i][j] == valid_tile)
+           {
+               valid_tile++;
+           }
+           else
+           {
+               invalid_count++;
+               break;
+           }
+       }
+
+       if (invalid_count > 0)
+           break;
+    }
+    
+    return invalid_count == 0;
 }
